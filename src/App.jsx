@@ -4,6 +4,7 @@ import { Canvas } from '@react-three/fiber'
 import SolarSystem from './components/SolarSystem.jsx'
 import CinematicEntry from './components/CinematicEntry.jsx'
 import PlanetPanel from './components/PlanetPanel.jsx'
+import WormholePanel from './components/WormholePanel.jsx'
 import DeployMode from './components/DeployMode.jsx'
 import HUD from './components/HUD.jsx'
 import { playPlanetClickSound, playPanelCloseSound, playDeploySound } from './utils/sounds.js'
@@ -11,6 +12,7 @@ import { playPlanetClickSound, playPanelCloseSound, playDeploySound } from './ut
 export default function App() {
   const [phase, setPhase] = useState('cinematic') // cinematic | explore
   const [selectedPlanet, setSelectedPlanet] = useState(null)
+  const [wormholeOpen, setWormholeOpen] = useState(false)
   const [deployActive, setDeployActive] = useState(false)
   const [deployGlowIndex, setDeployGlowIndex] = useState(-1)
 
@@ -28,6 +30,16 @@ export default function App() {
     setSelectedPlanet(null)
   }, [])
 
+  const handleWormholeClick = useCallback(() => {
+    playPlanetClickSound()
+    setWormholeOpen(true)
+  }, [])
+
+  const handleCloseWormhole = useCallback(() => {
+    playPanelCloseSound()
+    setWormholeOpen(false)
+  }, [])
+
   const handleDeploy = useCallback(() => {
     playDeploySound()
     setDeployActive(true)
@@ -43,6 +55,7 @@ export default function App() {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         if (selectedPlanet) setSelectedPlanet(null)
+        if (wormholeOpen) setWormholeOpen(false)
         if (deployActive) {
           setDeployActive(false)
           setDeployGlowIndex(-1)
@@ -51,7 +64,7 @@ export default function App() {
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectedPlanet, deployActive])
+  }, [selectedPlanet, wormholeOpen, deployActive])
 
   return (
     <div className="w-full h-full relative bg-black">
@@ -74,6 +87,7 @@ export default function App() {
             visible={phase === 'explore'}
             selectedPlanet={selectedPlanet}
             onPlanetClick={handlePlanetClick}
+            onWormholeClick={handleWormholeClick}
             deployGlowIndex={deployGlowIndex}
           />
         </Suspense>
@@ -81,8 +95,15 @@ export default function App() {
 
       {/* HUD Overlay */}
       <AnimatePresence>
-        {phase === 'explore' && !selectedPlanet && !deployActive && (
+        {phase === 'explore' && !selectedPlanet && !wormholeOpen && !deployActive && (
           <HUD onDeploy={handleDeploy} />
+        )}
+      </AnimatePresence>
+
+      {/* Wormhole "Coming Soon" Panel */}
+      <AnimatePresence>
+        {wormholeOpen && (
+          <WormholePanel onClose={handleCloseWormhole} />
         )}
       </AnimatePresence>
 

@@ -107,6 +107,8 @@ export default function HUD({ onDeploy }) {
             { emoji: '🪐', name: 'Web3', color: '#a78bfa' },
             { emoji: '🌑', name: 'Contact', color: '#94a3b8' },
             { emoji: '🌌', name: 'Resume', color: '#7c3aed' },
+            { emoji: '🌀', name: 'Wormhole', color: '#c084fc' },
+            { emoji: '🛸', name: 'UFO', color: '#22d3ee' },
           ].map((item) => (
             <div
               key={item.name}

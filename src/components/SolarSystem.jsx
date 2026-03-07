@@ -7,8 +7,12 @@ import Planet from './Planet.jsx'
 import Sun from './Sun.jsx'
 import BlackHole from './BlackHole.jsx'
 import Meteoroids from './Meteoroids.jsx'
+import Alien from './Alien.jsx'
+import Wormhole from './Wormhole.jsx'
+import AsteroidBelt from './AsteroidBelt.jsx'
+import SpaceDust from './SpaceDust.jsx'
 
-export default function SolarSystem({ visible, selectedPlanet, onPlanetClick, deployGlowIndex }) {
+export default function SolarSystem({ visible, selectedPlanet, onPlanetClick, onWormholeClick, deployGlowIndex }) {
   const controlsRef = useRef()
 
   if (!visible) return null
@@ -20,13 +24,18 @@ export default function SolarSystem({ visible, selectedPlanet, onPlanetClick, de
       <directionalLight position={[10, 20, 10]} intensity={0.8} color="#ffffff" />
       <directionalLight position={[-10, -5, -10]} intensity={0.15} color="#4060ff" />
 
-      {/* Stars background */}
-      <Stars radius={300} depth={150} count={10000} factor={5} saturation={0.2} fade speed={1} />
+      {/* Stars background — dense starfield */}
+      <Stars radius={300} depth={150} count={15000} factor={5} saturation={0.3} fade speed={1} />
+
+      {/* Additional faint star layer for depth */}
+      <Stars radius={400} depth={200} count={5000} factor={3} saturation={0.1} fade speed={0.5} />
 
       {/* Nebula planes */}
       <NebulaPlane position={[-80, 20, -120]} color="#1e3a5f" size={100} />
       <NebulaPlane position={[60, -15, -100]} color="#2d1b4e" size={80} />
       <NebulaPlane position={[0, 30, -150]} color="#1a2744" size={120} />
+      <NebulaPlane position={[100, 10, -80]} color="#1b2838" size={90} />
+      <NebulaPlane position={[-50, -20, -160]} color="#251540" size={110} />
 
       {/* Orbit Controls */}
       <OrbitControls
@@ -82,14 +91,36 @@ export default function SolarSystem({ visible, selectedPlanet, onPlanetClick, de
 
       {/* Meteoroids streaking across the scene */}
       <Meteoroids />
+
+      {/* Alien UFO flying through the system */}
+      <Alien />
+
+      {/* Wormhole portal */}
+      <Wormhole onClick={onWormholeClick} hideLabel={!!selectedPlanet} />
+
+      {/* Asteroid belt between Mars and Jupiter */}
+      <AsteroidBelt />
+
+      {/* Cosmic dust particles for depth */}
+      <SpaceDust />
     </>
   )
 }
 
 function NebulaPlane({ position, color, size }) {
+  const ref = useRef()
   const rotation = useMemo(() => [Math.random() * 0.5, Math.random() * 0.5, 0], [])
+
+  useFrame((state) => {
+    if (ref.current) {
+      const t = state.clock.elapsedTime
+      ref.current.material.opacity = 0.12 + Math.sin(t * 0.3 + position[0] * 0.1) * 0.04
+      ref.current.rotation.z += 0.0002
+    }
+  })
+
   return (
-    <mesh position={position} rotation={rotation}>
+    <mesh ref={ref} position={position} rotation={rotation}>
       <planeGeometry args={[size, size]} />
       <meshBasicMaterial
         color={color}
@@ -103,6 +134,8 @@ function NebulaPlane({ position, color, size }) {
 }
 
 function OrbitPath({ radius }) {
+  const lineRef = useRef()
+
   const points = useMemo(() => {
     const pts = []
     for (let i = 0; i <= 256; i++) {
@@ -112,8 +145,16 @@ function OrbitPath({ radius }) {
     return pts
   }, [radius])
 
+  useFrame((state) => {
+    if (lineRef.current) {
+      const t = state.clock.elapsedTime
+      lineRef.current.material.opacity = 0.12 + Math.sin(t * 0.5 + radius * 0.3) * 0.06
+    }
+  })
+
   return (
     <Line
+      ref={lineRef}
       points={points}
       color="#4488cc"
       transparent
