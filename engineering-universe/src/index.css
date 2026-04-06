@@ -1,0 +1,168 @@
+@import "tailwindcss";
+
+@theme {
+  --font-orbitron: 'Orbitron', sans-serif;
+  --font-space: 'Space Mono', monospace;
+  --font-inter: 'Inter', sans-serif;
+  --color-cosmic-black: #000000;
+  --color-cosmic-dark: #0a0a1a;
+  --color-cosmic-blue: #1e40af;
+  --color-cosmic-purple: #7c3aed;
+  --color-cosmic-cyan: #06b6d4;
+  --color-cosmic-green: #10b981;
+  --color-cosmic-orange: #f97316;
+  --color-cosmic-red: #ef4444;
+  --color-cosmic-gold: #fbbf24;
+  --color-cosmic-ice: #a5f3fc;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  font-family: 'Inter', sans-serif;
+  color: #fff;
+}
+
+/* Custom scrollbar — futuristic thin neon */
+::-webkit-scrollbar {
+  width: 3px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(6, 182, 212, 0.03);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(6, 182, 212, 0.3), rgba(124, 58, 237, 0.3));
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(6, 182, 212, 0.5), rgba(124, 58, 237, 0.5));
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 2px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+}
+
+/* Terminal cursor blink */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.terminal-cursor {
+  animation: blink 1s step-end infinite;
+}
+
+/* Glow effects */
+.glow-text {
+  text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor;
+}
+
+.glow-text-soft {
+  text-shadow: 0 0 8px currentColor, 0 0 16px currentColor;
+}
+
+.panel-glass {
+  background: rgba(5, 5, 20, 0.92);
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Holographic shimmer overlay */
+.holo-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.holo-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(6, 182, 212, 0.03) 45%, rgba(124, 58, 237, 0.03) 55%, transparent 60%);
+  animation: shimmer 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shimmer {
+  0%, 100% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+}
+
+/* Warp speed lines for cinematic */
+@keyframes warpLine {
+  0% { transform: translateZ(0px) scaleX(1); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translateZ(800px) scaleX(3); opacity: 0; }
+}
+
+@keyframes subtlePulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.3; }
+  94% { opacity: 1; }
+  96% { opacity: 0.5; }
+  97% { opacity: 1; }
+}
+
+.animate-flicker {
+  animation: flicker 4s ease-in-out infinite;
+}
+
+/* Breathing glow for borders */
+@keyframes borderGlow {
+  0%, 100% { border-color: rgba(6, 182, 212, 0.15); }
+  50% { border-color: rgba(6, 182, 212, 0.35); }
+}
+
+.animate-border-glow {
+  animation: borderGlow 3s ease-in-out infinite;
+}
+
+/* Data stream for backgrounds */
+@keyframes dataStream {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 0% 100%; }
+}
+
+/* Radial gradient spotlight */
+.spotlight {
+  background: radial-gradient(ellipse 600px 400px at center 40%, rgba(56, 189, 248, 0.08) 0%, transparent 70%);
+}
+
+/* Noise texture overlay */
+.noise-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+/* Orbit line glow */
+.orbit-line {
+  box-shadow: 0 0 8px rgba(255,255,255,0.05);
+}
+
+/* Selection color */
+::selection {
+  background: rgba(6, 182, 212, 0.3);
+  color: #e0f2fe;
+}
