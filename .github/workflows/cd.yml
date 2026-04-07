@@ -17,6 +17,8 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -55,3 +57,35 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  smoke-test:
+    name: Post-deploy smoke test
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - name: Verify deployed site is reachable
+        env:
+          PAGE_URL: ${{ needs.deploy.outputs.page_url }}
+        run: |
+          if [ -z "$PAGE_URL" ]; then
+            echo "Deployment URL is empty"
+            exit 1
+          fi
+
+          for i in {1..6}; do
+            status_code=$(curl -s -o /tmp/index.html -w "%{http_code}" "$PAGE_URL")
+            if [ "$status_code" = "200" ]; then
+              break
+            fi
+            echo "Attempt $i: Received HTTP $status_code from $PAGE_URL"
+            sleep 10
+          done
+
+          final_status=$(curl -s -o /tmp/index.html -w "%{http_code}" "$PAGE_URL")
+          if [ "$final_status" != "200" ]; then
+            echo "Smoke test failed: expected HTTP 200, got $final_status"
+            exit 1
+          fi
+
+          grep -qi "<html" /tmp/index.html || (echo "Smoke test failed: HTML document not returned" && exit 1)
+          echo "Smoke test passed for $PAGE_URL"
