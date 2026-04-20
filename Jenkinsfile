@@ -4,6 +4,11 @@ pipeline {
     options {
         timestamps()
         disableConcurrentBuilds()
+        skipDefaultCheckout(true)
+    }
+
+    tools {
+        nodejs 'node18'
     }
 
     parameters {
@@ -20,6 +25,18 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+            }
+        }
+
+        stage('Verify Toolchain') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'node -v && npm -v'
+                    } else {
+                        bat 'node -v && npm -v'
+                    }
+                }
             }
         }
 
