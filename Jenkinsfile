@@ -17,10 +17,6 @@ pipeline {
         booleanParam(name: 'PUSH_IMAGE', defaultValue: false, description: 'Push image after build (requires Docker registry credentials)')
     }
 
-    environment {
-        NODE_ENV = 'production'
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -45,9 +41,9 @@ pipeline {
                 dir("${params.APP_DIR}") {
                     script {
                         if (isUnix()) {
-                            sh 'npm ci'
+                            sh 'npm ci --include=dev'
                         } else {
-                            bat 'npm ci'
+                            bat 'npm ci --include=dev'
                         }
                     }
                 }
