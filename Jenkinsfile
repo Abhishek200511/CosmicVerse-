@@ -66,7 +66,12 @@ pipeline {
 
         stage('Archive dist') {
             steps {
-                archiveArtifacts artifacts: "${params.APP_DIR}/dist/**", fingerprint: true, onlyIfSuccessful: true
+                script {
+                    def appDir = params.APP_DIR?.trim()
+                    // Jenkins artifact globs should not be prefixed with './'.
+                    def artifactPattern = (!appDir || appDir == '.') ? 'dist/**' : "${appDir}/dist/**"
+                    archiveArtifacts artifacts: artifactPattern, fingerprint: true, onlyIfSuccessful: true
+                }
             }
         }
 
